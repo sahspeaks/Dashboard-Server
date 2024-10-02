@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 // Define the Base User schema
 const userSchema = new mongoose.Schema({
@@ -103,6 +105,17 @@ const adminSchema = new mongoose.Schema({
     default: "admin",
   },
 });
+
+deliveryPartnerSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+deliveryPartnerSchema.methods.isPasswordCorrect = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
 
 export const Customer = mongoose.model("Customer", customerSchema);
 export const DeliveryPartner = mongoose.model(

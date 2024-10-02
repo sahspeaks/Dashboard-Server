@@ -6,28 +6,12 @@ import { PORT, MONGODB_URI, DB_NAME } from "./src/constants/env.constants.js";
 import { admin } from "./src/config/AdminJsConfig.js";
 import { sessionStore, authenticate } from "./src/config/config.js";
 
-// const PORT = 3000;
-// const MONGODB_URI =
-//   "mongodb+srv://akroy2456:abhishek@cluster0.fan8t.mongodb.net/test?retryWrites=true&w=majority&appName=Cluster0";
-// const DEFAULT_ADMIN = {
-//   email: "sahspeaks@gmail.com",
-//   password: "abhishek",
-// };
-
-// const authenticate = async (email, password) => {
-//   if (email === DEFAULT_ADMIN.email && password === DEFAULT_ADMIN.password) {
-//     return Promise.resolve(DEFAULT_ADMIN);
-//   }
-//   return null;
-// };
-
-// AdminJS.registerAdapter({
-//   Resource: AdminJSMongoose.Resource,
-//   Database: AdminJSMongoose.Database,
-// });
+//import Routes
+import userRoutes from "./src/routes/user.route.js";
 
 const start = async () => {
   const app = express();
+
   await mongoose.connect(MONGODB_URI);
   // const admin = new AdminJS({
   //   resources: [
@@ -94,6 +78,10 @@ const start = async () => {
     }
   );
   app.use(admin.options.rootPath, adminRouter);
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  //Implementing Routes
+  app.use("/api", userRoutes);
 
   app.listen(PORT, () => {
     console.log(
