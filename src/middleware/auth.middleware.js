@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { ACCESS_TOKEN_SECRET } from "../constants/env.constants.js";
 
-export const verifyToken = async (req, _, next) => {
+export const verifyToken = async (req, res, next) => {
   try {
     const authHeader = req.headers["authorization"]; // or it can be Authorization
     if (!authHeader || !authHeader.startsWith("Bearer ")) {

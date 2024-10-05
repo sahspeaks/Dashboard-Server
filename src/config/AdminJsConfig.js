@@ -42,6 +42,18 @@ export const admin = new AdminJS({
     },
     {
       resource: Models.Order,
+      options: {
+        listProperties: [
+          "orderId",
+          "customer",
+          "deliveryPartner",
+          "items",
+          "branch",
+          "status",
+          "totalPrice",
+        ],
+        filterProperties: ["orderId", "customer", "branch", "status"],
+      },
     },
     {
       resource: Models.Counter,

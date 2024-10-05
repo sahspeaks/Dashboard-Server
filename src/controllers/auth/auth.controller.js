@@ -46,7 +46,7 @@ export const loginDeliveryPartner = async (req, res) => {
     if (!deliveryPartner) {
       return res.status(404).json({ message: "Delivery Partner not found" });
     }
-    const isPasswordValid = await deliveryPartner.isPasswordValid(password);
+    const isPasswordValid = await deliveryPartner.isPasswordCorrect(password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid password" });
     }

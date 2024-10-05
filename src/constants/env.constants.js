@@ -12,7 +12,7 @@ const DB_NAME = "blinkit";
 const SESSION_SECRET =
   process.env.SESSION_SECRET || "sieL67H7GbkzJ4XCoH0IHcmO1hGBSiG5";
 
-const NODE_ENV = process.env.NODE_ENV || "production";
+const NODE_ENV = process.env.NODE_ENV;
 
 const REFRESH_TOKEN_SECRET =
   process.env.REFRESH_TOKEN_SECRET || "refreshTokenSecret";

@@ -1,6 +1,9 @@
 import AdminJSExpress from "@adminjs/express";
 import express from "express";
 import mongoose from "mongoose";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import cors from "cors";
 
 import { PORT, MONGODB_URI, DB_NAME } from "./src/constants/env.constants.js";
 import { admin } from "./src/config/AdminJsConfig.js";
@@ -8,55 +11,46 @@ import { sessionStore, authenticate } from "./src/config/config.js";
 
 //import Routes
 import userRoutes from "./src/routes/user.route.js";
+import productRoutes from "./src/routes/product.route.js";
+import orderRoutes from "./src/routes/order.route.js";
 
 const start = async () => {
   const app = express();
+  const server = createServer(app);
+  const io = new Server(server, {
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"],
+    },
+    pingInterval: 10000,
+    pingTimeout: 5000,
+    transports: ["websocket"],
+  });
+  app.use((req, res, next) => {
+    req.io = io;
+    next();
+  });
+
+  // Basic route to test if server is running
+  app.get("/", (req, res) => {
+    res.send("Server is running");
+  });
+
+  io.on("connection", (socket) => {
+    console.log("A User Connected ☑");
+
+    socket.on("joinRoom", (orderId) => {
+      socket.join(orderId);
+      console.log(`User Joined room ${orderId}`);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("User Disconnected X");
+    });
+  });
 
   await mongoose.connect(MONGODB_URI);
-  // const admin = new AdminJS({
-  //   resources: [
-  //     {
-  //       resource: Models.Customer,
-  //       options: {
-  //         listProperties: ["phone", "role", "isActivated"],
-  //         filterProperties: ["phone", "role"],
-  //       },
-  //     },
-  //     {
-  //       resource: Models.DeliveryPartner,
-  //       options: {
-  //         listProperties: ["email", "role", "isActivated"],
-  //         filterProperties: ["email", "role"],
-  //       },
-  //     },
-  //     {
-  //       resource: Models.Admin,
-  //       options: {
-  //         listProperties: ["email", "role", "isActivated"],
-  //         filterProperties: ["email", "role"],
-  //       },
-  //     },
-  //     {
-  //       resource: Models.Branch,
-  //     },
-  //   ],
-  //   branding: {
-  //     companyName: "BlinkIt",
-  //     withMadeWithLove: false,
-  //   },
-  //   rootPath: "/admin",
-  // });
 
-  // const MongoDBStore = ConnectMongoDBSession(session);
-
-  // const sessionStore = new MongoDBStore({
-  //   uri: MONGODB_URI,
-  //   collection: "sessions",
-  // });
-
-  // sessionStore.on("error", (error) => {
-  //   console.log("Session store error", error);
-  // });
   const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
     admin,
     {
@@ -82,8 +76,10 @@ const start = async () => {
   app.use(express.urlencoded({ extended: true }));
   //Implementing Routes
   app.use("/api", userRoutes);
+  app.use("/api", productRoutes);
+  app.use("/api", orderRoutes);
 
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(
       `AdminJS started on http://localhost:${PORT}${admin.options.rootPath}`
     );

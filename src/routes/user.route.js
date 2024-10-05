@@ -5,7 +5,7 @@ import {
   fetchUser,
   refreshToken,
 } from "../controllers/auth/auth.controller.js";
-
+import { updateUser } from "../controllers/tracking/user.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 
 const router = Router();
@@ -17,5 +17,7 @@ router.route("/delivery-partner/login").post(loginDeliveryPartner);
 router.route("/refresh-token").post(refreshToken);
 // Fetch user route
 router.route("/user").get(verifyToken, fetchUser);
+// Update user route
+router.route("/user/update").patch(verifyToken, updateUser);
 
 export default router;

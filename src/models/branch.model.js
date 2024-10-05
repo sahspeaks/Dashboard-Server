@@ -15,7 +15,7 @@ const branchSchema = new mongoose.Schema({
     type: String,
   },
   location: {
-    latitude: {
+    lattitude: {
       type: String,
     },
     longitude: {

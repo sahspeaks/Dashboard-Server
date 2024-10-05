@@ -4,7 +4,6 @@ import { Counter } from "./counter.model.js";
 const orderSchema = new mongoose.Schema({
   orderId: {
     type: String,
-    required: true,
   },
   customer: {
     type: mongoose.Schema.Types.ObjectId,
@@ -41,11 +40,11 @@ const orderSchema = new mongoose.Schema({
   deliveryLocation: {
     lattitude: {
       type: Number,
-      required: true,
+      // required: true,
     },
     longitude: {
       type: Number,
-      required: true,
+      // required: true,
     },
     address: {
       type: String,
@@ -54,11 +53,11 @@ const orderSchema = new mongoose.Schema({
   pickupLocation: {
     lattitude: {
       type: Number,
-      required: true,
+      // required: true,
     },
     longitude: {
       type: Number,
-      required: true,
+      // required: true,
     },
     address: {
       type: String,
@@ -77,8 +76,8 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["pending", "accepted", "arriving", "delivered", "cancelled"],
-    default: "pending",
+    enum: ["available", "confirmed", "arriving", "delivered", "cancelled"],
+    default: "available",
   },
   totalPrice: {
     type: Number,
